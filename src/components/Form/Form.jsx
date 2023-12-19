@@ -22,9 +22,6 @@ export const Form = () => {
     setNumber('');
   };
 
-  const generetedId = () => {
-    return nanoid(5);
-  };
   const handleSubmit = e => {
     e.preventDefault();
     const isAdded = contacts.find(
@@ -40,7 +37,7 @@ export const Form = () => {
       });
       return;
     }
-    dispatch(addContact({ id: generetedId(), name: name, number: number }));
+    dispatch(addContact({ id: nanoid(), name: name, number: number }));
 
     resetForm();
   };
