@@ -1,143 +1,92 @@
-import React, { useState } from 'react';
-import { nanoid } from 'nanoid';
+import { useState } from 'react';
+import { nanoid } from '@reduxjs/toolkit';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import { useSelector, useDispatch } from 'react-redux';
+import { addContact } from '../../redux/contactSlice';
 import {
-  StyledButten,
+  StyledButton,
   StyledFormIput,
   StyledFormLabel,
   StyledForm,
 } from 'components/Form/FormStyle';
+const getContacts = state => state.contacts.contacts;
 
-export const Form = ({ onSubmit }) => {
-  const initState = {
-    name: '',
-    number: '',
+export const Form = () => {
+  const contacts = useSelector(getContacts);
+  const dispatch = useDispatch();
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
+
+  const resetForm = () => {
+    setName('');
+    setNumber('');
   };
 
-  const [formData, setFormData] = useState({ ...initState });
-
-  const handelSubmit = e => {
+  const generetedId = () => {
+    return nanoid(5);
+  };
+  const handleSubmit = e => {
     e.preventDefault();
-    onSubmit({ ...formData });
+    const isAdded = contacts.find(
+      el => el.name.toLowerCase() === name.toLowerCase()
+    );
+
+    if (isAdded) {
+      Notify.warning(`${name}: is already in contacts`, {
+        width: '400px',
+        position: 'center-center',
+        timeout: 3000,
+        fontSize: '20px',
+      });
+      return;
+    }
+    dispatch(addContact({ id: generetedId(), name: name, number: number }));
+
     resetForm();
   };
-  const resetForm = () => {
-    setFormData({ ...initState });
+
+  const hendleChange = e => {
+    const { value, name } = e.currentTarget;
+    switch (name) {
+      case 'name':
+        setName(value);
+        break;
+      case 'number':
+        setNumber(value);
+        break;
+      default:
+        break;
+    }
   };
-  const handelChange = e => {
-    const { name, value } = e.currentTarget;
-    setFormData(prevData => ({ ...prevData, [name]: value }));
-  };
-  const nameInputId = nanoid();
-  const numberInputId = nanoid();
 
   return (
-    <StyledForm onSubmit={handelSubmit}>
-      <StyledFormLabel
-        htmlFor={nameInputId}
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'start',
-        }}
-      >
+    <StyledForm onSubmit={handleSubmit}>
+      <StyledFormLabel>
+        {' '}
         Name
         <StyledFormIput
           type="text"
           name="name"
-          id={nameInputId}
-          value={formData.name}
+          value={name}
           placeholder="Enter name"
-          onChange={handelChange}
+          onChange={hendleChange}
           pattern="^[a-zA-Zа-яА-Я]+(([' \-][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
           required
         />
       </StyledFormLabel>
-      <StyledFormLabel
-        htmlFor={numberInputId}
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'start',
-        }}
-      >
+      <StyledFormLabel>
         Number
         <StyledFormIput
           type="tel"
           name="number"
-          id={numberInputId}
-          value={formData.number}
+          value={number}
+          onChange={hendleChange}
           placeholder="Enter 7-digit number"
-          onChange={handelChange}
           pattern="[0-9]{7}"
+          required
         />
       </StyledFormLabel>
-      <StyledButten type="submit">Add contact</StyledButten>
+      <StyledButton type="submit">Add contact</StyledButton>
     </StyledForm>
   );
 };
-
-// export class Form extends Component {
-//   state = { ...initState };
-
-//   handelSubmit = e => {
-//     e.preventDefault();
-//     this.props.onSubmit({ ...this.state });
-//     this.resetForm();
-//   };
-//   resetForm = () => {
-//     this.setState({ ...initState });
-//   };
-//   handelChange = e => {
-//     const { name, value } = e.currentTarget;
-//     this.setState({ [name]: value });
-//   };
-//   nameInputId = nanoid();
-//   numberInputId = nanoid();
-
-//   render() {
-//     return (
-//       <StyledForm onSubmit={this.handelSubmit}>
-//         <StyledFormLabel
-//           htmlFor={this.nameInputId}
-//           style={{
-//             display: 'flex',
-//             flexDirection: 'column',
-//             alignItems: 'start',
-//           }}
-//         >
-//           Name
-//           <StyledFormIput
-//             type="text"
-//             name="name"
-//             id={this.nameInputId}
-//             value={this.state.name}
-//             placeholder="Enter name"
-//             onChange={this.handelChange}
-//             pattern="^[a-zA-Zа-яА-Я]+(([' \-][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-//             required
-//           />
-//         </StyledFormLabel>
-//         <StyledFormLabel
-//           htmlFor={this.numberInputId}
-//           style={{
-//             display: 'flex',
-//             flexDirection: 'column',
-//             alignItems: 'start',
-//           }}
-//         >
-//           Number
-//           <StyledFormIput
-//             type="tel"
-//             name="number"
-//             id={this.numberInputId}
-//             value={this.state.number}
-//             placeholder="Enter 7-digit number"
-//             onChange={this.handelChange}
-//             pattern="[0-9]{7}"
-//           />
-//         </StyledFormLabel>
-//         <StyledButten type="submit">Add contact</StyledButten>
-//       </StyledForm>
-//     );
-//   }
-// }

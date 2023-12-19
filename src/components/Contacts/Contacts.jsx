@@ -1,28 +1,24 @@
-import React from 'react';
+import { useDispatch } from 'react-redux';
 import {
-  StyledList,
+  StyledDeletButton,
   StyledListItem,
   StyledListItemText,
-  StyledDeletButton,
-} from 'components/Contacts/ContactsStyle';
-export const Contacts = ({ contacts, onDeleteContact }) => {
+} from 'components/ContactList/ContactListStyle';
+import { deleteContact } from '../../redux/contactSlice';
+
+export const ContactListItem = ({ contact }) => {
+  const dispatch = useDispatch();
   return (
-    <StyledList>
-      {contacts.map(({ id, name, number }) => {
-        return (
-          <StyledListItem key={id}>
-            <StyledListItemText>
-              {name}: {number}
-            </StyledListItemText>
-            <StyledDeletButton
-              type="button"
-              onClick={() => onDeleteContact(id)}
-            >
-              Delete
-            </StyledDeletButton>
-          </StyledListItem>
-        );
-      })}
-    </StyledList>
+    <StyledListItem key={contact.id}>
+      <StyledListItemText>
+        {contact.name}: {contact.number}
+      </StyledListItemText>
+      <StyledDeletButton
+        type="button"
+        onClick={() => dispatch(deleteContact(contact.id))}
+      >
+        Delete
+      </StyledDeletButton>
+    </StyledListItem>
   );
 };

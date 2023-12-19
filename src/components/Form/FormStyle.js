@@ -29,7 +29,7 @@ export const StyledFormIput = styled('input')`
     background-color: #fff;
   }
 `;
-export const StyledButten = styled('button')`
+export const StyledButton = styled('button')`
   margin-top: 20px;
   background-color: #e1ecf4;
   border-radius: 3px;
